@@ -9,11 +9,11 @@ namespace ScreenshotsService.Services
 {
     public class ProcessImageScreenshot : IProcessImage
     {
-        private readonly ILogger _logger;
+        private readonly ILogger _Logger;
 
         public ProcessImageScreenshot(ILogger<ProcessImageScreenshot> logger)
         {
-            _logger = logger;
+            _Logger = logger;
         }
 
         public MemoryStream MakeScreenshot(int width, int height)
@@ -36,7 +36,7 @@ namespace ScreenshotsService.Services
             }
             catch(Exception ex)
             {
-                _logger.LogError($"Error occured: ", ex);
+                _Logger.LogError($"Error occured: ", ex);
 
                 return new MemoryStream();
             }

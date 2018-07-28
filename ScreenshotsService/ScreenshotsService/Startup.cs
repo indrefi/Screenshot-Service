@@ -34,10 +34,16 @@ namespace ScreenshotsService
             services.AddTransient<IProcessImage, ProcessImageScreenshot>();
             services.AddTransient<IPersistData, PersistToLocalDisk>();
             services.AddTransient<IHashService, ComputeSHA256>();
+            services.AddTransient<ICollectSystemInfo, CollectSystemInfo>();
+            services.AddTransient<IOpenPages, OpenPagesWithDefaultBrowser>();
+
+            services.AddSingleton<IDisplaySize, DisplaySize>();
 
             // Add configuration options
             services.Configure<ImageConfigModel>(Configuration.GetSection("ImageConfig"));
             services.Configure<S3SettingsModel>(Configuration.GetSection("S3Settings"));
+            services.Configure<DisplaySizeSettingsModel>(Configuration.GetSection("DisplaySizeSettings"));
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -54,6 +60,7 @@ namespace ScreenshotsService
 
             app.UseHttpsRedirection();
             app.UseMvc();
+
         }
     }
 }

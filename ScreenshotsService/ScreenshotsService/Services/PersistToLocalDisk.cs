@@ -9,18 +9,18 @@ namespace ScreenshotsService.Services
 {
     public class PersistToLocalDisk : IPersistData
     {
-        private readonly ILogger _logger;
-        private readonly IOptions<ImageConfigModel> _imageOptions;
+        private readonly ILogger _Logger;
+        private readonly IOptions<ImageConfigModel> _ImageOptions;
 
         public PersistToLocalDisk(ILogger<PersistToLocalDisk> logger, IOptions<ImageConfigModel> imageOptions)
         {
-            _logger = logger;
-            _imageOptions = imageOptions;
+            _Logger = logger;
+            _ImageOptions = imageOptions;
         }
 
         public string PersistImage(MemoryStream memoryStream, string fileName)
         {
-            var path = $"{_imageOptions.Value.ImageDiskPath}{fileName}.{_imageOptions.Value.ImageFormat}";
+            var path = $"{_ImageOptions.Value.ImageDiskPath}{fileName}.{_ImageOptions.Value.ImageFormat}";
             try
             {
                 using (var file = new FileStream(path, FileMode.Create, FileAccess.Write))
@@ -32,7 +32,7 @@ namespace ScreenshotsService.Services
             }
             catch(Exception ex)
             {
-                _logger.LogError($"Error occured in { GetType().Name }", ex);
+                _Logger.LogError($"Error occured: ", ex);
             }
 
             return fileName;

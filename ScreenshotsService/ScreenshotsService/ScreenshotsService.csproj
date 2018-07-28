@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <Folder Include="Helpers\" />
+    <Folder Include="Utils\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 

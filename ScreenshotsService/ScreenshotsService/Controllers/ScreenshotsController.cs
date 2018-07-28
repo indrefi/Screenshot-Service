@@ -16,17 +16,22 @@ namespace ScreenshotsService.Controllers
     [ApiController]
     public class ScreenshotsController : ControllerBase
     {
-        private readonly ILogger _logger;
-        private readonly IProcessImage _processImage;
-        private readonly IPersistData _persistData;
-        private readonly IHashService _hashService;
+        private readonly ILogger _Logger;
+        private readonly IProcessImage _ProcessImage;
+        private readonly IPersistData _PersistData;
+        private readonly IHashService _HashService;
+        private readonly IOpenPages _OpenPages;
+        private readonly IDisplaySize _DisplaySize;
 
-        public ScreenshotsController(ILogger<ScreenshotsController> logger, IProcessImage processImage, IPersistData persistData, IHashService hashService)
+        public ScreenshotsController(ILogger<ScreenshotsController> logger, IProcessImage processImage, IPersistData persistData,
+            IHashService hashService, IDisplaySize displaySize, IOpenPages openPages)
         {
-            _logger = logger;
-            _processImage = processImage;
-            _persistData = persistData;
-            _hashService = hashService;
+            _Logger = logger;
+            _ProcessImage = processImage;
+            _PersistData = persistData;
+            _HashService = hashService;
+            _OpenPages = openPages;
+            _DisplaySize = displaySize;
         }
 
         // GET: api/Screenshots/191347bfe55d0ca9a574db77bc8648275ce258461450e793528e0cc6d2dcf8f5
@@ -42,13 +47,16 @@ namespace ScreenshotsService.Controllers
         {
             List<ScreenshotResponseModel> result = new List<ScreenshotResponseModel>();
 
+            (int, int) size = _DisplaySize.GetSize();
+
             List<string> urlList = new ContextUrlExtracter(new UrlListExtracter()).ParseContext(urlModel);
             foreach(var url in urlList)
             {
-                var hashValue = _hashService.GetHash(url);
-                using (MemoryStream memoryStream = _processImage.MakeScreenshot(3200, 1800))
+                var hashValue = _HashService.GetHash(url);
+                _OpenPages.OpenUrl(url);
+                using (MemoryStream memoryStream = _ProcessImage.MakeScreenshot(size.Item1, size.Item2))
                 {
-                    var s3ResultPath = _persistData.PersistImage(memoryStream, hashValue);
+                    var s3ResultPath = _PersistData.PersistImage(memoryStream, hashValue);
                     result.Add(new ScreenshotResponseModel { SourceUrl = url, HashName = hashValue, Path = s3ResultPath });
                 }             
             }
