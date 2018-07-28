@@ -56,11 +56,12 @@ namespace ScreenshotsService.Controllers
         [HttpPost]
         public ActionResult<string> Post(UrlModel urlModel)
         {
-            List<ScreenshotResponseModel> result = new List<ScreenshotResponseModel>();
-
+            var result = new List<ScreenshotResponseModel>();
             (int, int) size = _DisplaySize.GetSize();
 
             List<string> urlList = new ContextUrlExtracter(new UrlListExtracter()).ParseContext(urlModel);
+            if (urlList is null) return StatusCode(500);
+
             foreach(var url in urlList)
             {
                 var hashValue = _HashService.GetHash(url);
