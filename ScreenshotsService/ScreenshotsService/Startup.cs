@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Amazon.Runtime;
+using Amazon.S3;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -13,6 +15,8 @@ using Microsoft.Extensions.Options;
 using ScreenshotsService.Models;
 using ScreenshotsService.Services;
 using ScreenshotsService.Services.Interfaces;
+using ScreenshotsService.UtilServices;
+using ScreenshotsService.UtilServices.Interfaces;
 
 namespace ScreenshotsService
 {
@@ -38,6 +42,7 @@ namespace ScreenshotsService
             services.AddTransient<IOpenPages, OpenPagesWithDefaultBrowser>();
 
             services.AddSingleton<IDisplaySize, DisplaySize>();
+            services.AddSingleton<IConnectToS3, ConnectToS3>();
 
             // Add configuration options
             services.Configure<ImageConfigModel>(Configuration.GetSection("ImageConfig"));

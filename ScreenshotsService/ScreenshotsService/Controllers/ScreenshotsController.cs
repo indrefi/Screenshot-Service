@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using ScreenshotsService.Models;
 using ScreenshotsService.Services.Interfaces;
+using ScreenshotsService.UtilServices.Interfaces;
 
 namespace ScreenshotsService.Controllers
 {
