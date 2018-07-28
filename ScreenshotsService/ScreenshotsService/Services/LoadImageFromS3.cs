@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ScreenshotsService.Models;
 using ScreenshotsService.UtilServices.Interfaces;
+using System;
 using System.IO;
 
 namespace ScreenshotsService.Services.Interfaces
@@ -25,14 +26,16 @@ namespace ScreenshotsService.Services.Interfaces
 
         public MemoryStream LoadImage(string fileName)
         {
-            var getRequest = new GetObjectRequest
+            try
             {
-                BucketName = _S3Settings.Value.BucketName,
-                Key = fileName
-            };
+                var getRequest = new GetObjectRequest
+                {
+                    BucketName = _S3Settings.Value.BucketName,
+                    Key = fileName
+                };
 
-            using (var awsS3Instance = _ConnectToS3.GetAwsS3ClientInstance())
-            {
+                var awsS3Instance = _ConnectToS3.GetAwsS3ClientInstance();
+
                 using (var responseObject = awsS3Instance.GetObjectAsync(getRequest).Result)
                 {
                     MemoryStream returnStream = new MemoryStream();
@@ -43,6 +46,12 @@ namespace ScreenshotsService.Services.Interfaces
                     return returnStream;
                 }
             }
+            catch(Exception ex)
+            {
+                _Logger.LogInformation($"{fileName} couldn't be loaded from AWS S3", ex);
+            }
+
+            return null;
         }
     }
 }

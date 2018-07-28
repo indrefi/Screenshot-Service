@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using ScreenshotsService.Models;
 using ScreenshotsService.Services.Interfaces;
 using ScreenshotsService.UtilServices.Interfaces;
+using System;
 using System.IO;
 
 namespace ScreenshotsService.Services
@@ -23,10 +24,12 @@ namespace ScreenshotsService.Services
             _ConnectToS3 = connectToS3;
         }
 
-        public string PersistImage(MemoryStream memoryStream, string fileName)
+        public void PersistImage(MemoryStream memoryStream, string fileName)
         {
-            using (var awsS3Instance = _ConnectToS3.GetAwsS3ClientInstance())
+            try
             {
+                var awsS3Instance = _ConnectToS3.GetAwsS3ClientInstance();
+
                 using (var utility = new TransferUtility(awsS3Instance))
                 {
                     TransferUtilityUploadRequest request = new TransferUtilityUploadRequest();
@@ -37,9 +40,11 @@ namespace ScreenshotsService.Services
                     utility.Upload(request);
 
                     _Logger.LogInformation($"{fileName} has been uploaded to AWS S3");
-
-                    return fileName;
                 }
+            }
+            catch(Exception ex)
+            {
+                _Logger.LogInformation($"{fileName} couldn't been uploaded to AWS S3", ex);
             }
         }
     }

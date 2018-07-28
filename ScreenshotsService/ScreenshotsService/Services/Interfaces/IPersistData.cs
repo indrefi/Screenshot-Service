@@ -4,6 +4,6 @@ namespace ScreenshotsService.Services.Interfaces
 {
     public interface IPersistData
     {
-        string PersistImage(MemoryStream memoryStream, string fileName);
+        void PersistImage(MemoryStream memoryStream, string fileName);
     }
 }

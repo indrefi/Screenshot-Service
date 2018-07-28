@@ -45,6 +45,8 @@ namespace ScreenshotsService.Controllers
         public IActionResult Get(string path)
         {
             var dataStream = _LoadData.LoadImage(path);
+            if (dataStream is null) return StatusCode(500);
+
             dataStream.Position = 0;
 
             return new FileStreamResult(dataStream, $"image/{_ImageConfig.Value.ImageFormat}");
@@ -65,7 +67,7 @@ namespace ScreenshotsService.Controllers
                 _OpenPages.OpenUrl(url);
                 using (MemoryStream memoryStream = _ProcessImage.MakeScreenshot(size.Item1, size.Item2))
                 {
-                    var s3ResultPath = _PersistData.PersistImage(memoryStream, hashValue);
+                    _PersistData.PersistImage(memoryStream, hashValue);
                     result.Add(new ScreenshotResponseModel { SourceUrl = url, RemoteFileKey = hashValue });
                 }             
             }

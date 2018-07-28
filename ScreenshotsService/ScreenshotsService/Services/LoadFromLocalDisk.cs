@@ -35,10 +35,10 @@ namespace ScreenshotsService.Services.Interfaces
             }
             catch(Exception ex)
             {
-                _Logger.LogError($"{fileName} has been requested from local disk and wasn't found.");
+                _Logger.LogError($"{fileName} has been requested from local disk and wasn't found.", ex);
             }
 
-            return new MemoryStream();
+            return null;
         }
     }
 }

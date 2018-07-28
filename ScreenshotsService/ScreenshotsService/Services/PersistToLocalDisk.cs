@@ -18,7 +18,7 @@ namespace ScreenshotsService.Services
             _ImageOptions = imageOptions;
         }
 
-        public string PersistImage(MemoryStream memoryStream, string fileName)
+        public void PersistImage(MemoryStream memoryStream, string fileName)
         {
             var path = $"{_ImageOptions.Value.ImageDiskPath}{fileName}.{_ImageOptions.Value.ImageFormat}";
             try
@@ -34,8 +34,6 @@ namespace ScreenshotsService.Services
             {
                 _Logger.LogError($"Error occured: ", ex);
             }
-
-            return fileName;
         }
     }
 }
