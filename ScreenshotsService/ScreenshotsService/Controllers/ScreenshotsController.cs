@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using ScreenshotsService.Models;
 using ScreenshotsService.Services.Interfaces;
@@ -23,9 +24,11 @@ namespace ScreenshotsService.Controllers
         private readonly IHashService _HashService;
         private readonly IOpenPages _OpenPages;
         private readonly IDisplaySize _DisplaySize;
+        private readonly ILoadData _LoadData;
+        private readonly IOptions<ImageConfigModel> _ImageConfig;
 
         public ScreenshotsController(ILogger<ScreenshotsController> logger, IProcessImage processImage, IPersistData persistData,
-            IHashService hashService, IDisplaySize displaySize, IOpenPages openPages)
+            IHashService hashService, IDisplaySize displaySize, IOpenPages openPages, ILoadData loadData, IOptions<ImageConfigModel> imageConfig)
         {
             _Logger = logger;
             _ProcessImage = processImage;
@@ -33,13 +36,18 @@ namespace ScreenshotsService.Controllers
             _HashService = hashService;
             _OpenPages = openPages;
             _DisplaySize = displaySize;
+            _LoadData = loadData;
+            _ImageConfig = imageConfig;
         }
 
         // GET: api/Screenshots/191347bfe55d0ca9a574db77bc8648275ce258461450e793528e0cc6d2dcf8f5
-        [HttpGet("{path}", Name = "Get")]
-        public string Get(string path)
+        [HttpGet("{path}")]
+        public IActionResult Get(string path)
         {
-            return "screenshotId";
+            var dataStream = _LoadData.LoadImage(path);
+            dataStream.Position = 0;
+
+            return new FileStreamResult(dataStream, $"image/{_ImageConfig.Value.ImageFormat}");
         }
 
         // POST: api/screenshots
@@ -58,7 +66,7 @@ namespace ScreenshotsService.Controllers
                 using (MemoryStream memoryStream = _ProcessImage.MakeScreenshot(size.Item1, size.Item2))
                 {
                     var s3ResultPath = _PersistData.PersistImage(memoryStream, hashValue);
-                    result.Add(new ScreenshotResponseModel { SourceUrl = url, HashName = hashValue, Path = s3ResultPath });
+                    result.Add(new ScreenshotResponseModel { SourceUrl = url, RemoteFileKey = hashValue });
                 }             
             }
 

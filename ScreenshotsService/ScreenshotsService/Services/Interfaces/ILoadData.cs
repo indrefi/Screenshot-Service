@@ -1,7 +1,9 @@
-﻿namespace ScreenshotsService.Services.Interfaces
+﻿using System.IO;
+
+namespace ScreenshotsService.Services.Interfaces
 {
     public interface ILoadData
     {
-        string LoadImagePath(string fileName);
+        MemoryStream LoadImage(string fileName);
     }
 }

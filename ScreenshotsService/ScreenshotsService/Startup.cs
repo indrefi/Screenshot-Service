@@ -40,6 +40,7 @@ namespace ScreenshotsService
             services.AddTransient<IHashService, ComputeSHA256>();
             services.AddTransient<ICollectSystemInfo, CollectSystemInfo>();
             services.AddTransient<IOpenPages, OpenPagesWithDefaultBrowser>();
+            services.AddTransient<ILoadData, LoadImageFromLocalDisk>();
 
             services.AddSingleton<IDisplaySize, DisplaySize>();
             services.AddSingleton<IConnectToS3, ConnectToS3>();
