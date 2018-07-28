@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using ScreenshotsService.Models;
 using ScreenshotsService.Services;
 using ScreenshotsService.Services.Interfaces;
 
@@ -29,10 +30,14 @@ namespace ScreenshotsService
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            // add custom services
+            // Add custom services
             services.AddTransient<IProcessImage, ProcessImageScreenshot>();
             services.AddTransient<IPersistData, PersistToLocalDisk>();
-            services.AddTransient<IHashService, ComputeSHA256Hash>();
+            services.AddTransient<IHashService, ComputeSHA256>();
+
+            // Add configuration options
+            services.Configure<ImageConfigModel>(Configuration.GetSection("ImageConfig"));
+            services.Configure<S3SettingsModel>(Configuration.GetSection("S3Settings"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

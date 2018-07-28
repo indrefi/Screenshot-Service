@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ScreenshotsService.Services
 {
-    public class ComputeSHA256Hash: IHashService
+    public class ComputeSHA256: IHashService
     {
         public string GetHash(string inputString)
         {
