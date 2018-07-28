@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  screenshotsservice:
+    image: ${DOCKER_REGISTRY}screenshotsservice
+    build:
+      context: .
+      dockerfile: ScreenshotsService\Dockerfile
