@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using ScreenshotsService.Helpers;
 using ScreenshotsService.Models;
 using ScreenshotsService.Services.Interfaces;
 using ScreenshotsService.UtilServices.Interfaces;
@@ -53,13 +54,14 @@ namespace ScreenshotsService.Controllers
         }
 
         // POST: api/screenshots
+        // JSON body that maps UrlModel
         [HttpPost]
         public ActionResult<string> Post(UrlModel urlModel)
         {
             var result = new List<ScreenshotResponseModel>();
             (int, int) size = _DisplaySize.GetSize();
 
-            List<string> urlList = new ContextUrlExtracter(new UrlListExtracter()).ParseContext(urlModel);
+            List<string> urlList = urlModel.Urls.ExtractUrl();
             if (urlList is null) return StatusCode(500);
 
             foreach(var url in urlList)
@@ -73,7 +75,34 @@ namespace ScreenshotsService.Controllers
                 }             
             }
 
-            return JsonConvert.SerializeObject(result);
+            return Ok( new { result = JsonConvert.SerializeObject(result) });
+        }
+
+        // POST: api/screenshots/upload
+        // Form-Data with file attached
+        [HttpPost("Upload")]
+        public async Task<IActionResult> Post(IFormFile file)
+        {
+            var result = new List<ScreenshotResponseModel>();
+            var fileContent = file.ReadAsStringAsync().Result.Trim();
+
+            (int, int) size = _DisplaySize.GetSize();
+
+            List<string> urlList = fileContent.ExtractUrl();
+            if (urlList is null) return StatusCode(500);
+
+            foreach (var url in urlList)
+            {
+                var hashValue = _HashService.GetHash(url);
+                _OpenPages.OpenUrl(url);
+                using (MemoryStream memoryStream = _ProcessImage.MakeScreenshot(size.Item1, size.Item2))
+                {
+                    _PersistData.PersistImage(memoryStream, hashValue);
+                    result.Add(new ScreenshotResponseModel { SourceUrl = url, RemoteFileKey = hashValue });
+                }
+            }
+
+            return Ok(new { result = JsonConvert.SerializeObject(result) });
         }
     }
 }
