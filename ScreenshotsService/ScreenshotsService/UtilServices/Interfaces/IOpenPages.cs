@@ -1,4 +1,4 @@
-﻿namespace ScreenshotsService.Services.Interfaces
+﻿namespace ScreenshotsService.UtilServices.Interfaces
 {
     public interface IOpenPages
     {
