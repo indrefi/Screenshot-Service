@@ -14,9 +14,9 @@
       "launchBrowser": true,
       "launchUrl": "api/screenshots",
       "environmentVariables": {
-        "AWS_SECRET": "Value",
+        "AWS_SECRET": "",
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "AWS_KEY": "Value"
+        "AWS_KEY": ""
       }
     },
     "ScreenshotsService": {
