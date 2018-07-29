@@ -16,7 +16,7 @@ namespace ScreenshotsService.Services
             _Logger = logger;
         }
 
-        public MemoryStream MakeScreenshot(int width, int height)
+        public MemoryStream MakeScreenshot(string url, string hashValue, int width, int height)
         {
             try
             {
@@ -40,11 +40,6 @@ namespace ScreenshotsService.Services
 
                 return new MemoryStream();
             }
-        }
-
-        public MemoryStream MakeScreenshot(string url, string hashValue)
-        {
-            throw new NotImplementedException();
         }
     }
 }

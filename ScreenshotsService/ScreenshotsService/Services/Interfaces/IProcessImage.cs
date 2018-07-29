@@ -4,7 +4,6 @@ namespace ScreenshotsService.Services.Interfaces
 {
     public interface IProcessImage
     {
-        MemoryStream MakeScreenshot(int width, int height);
-        MemoryStream MakeScreenshot(string url, string hashValue);
+        MemoryStream MakeScreenshot(string url, string hashValue, int width, int height);
     }
 }

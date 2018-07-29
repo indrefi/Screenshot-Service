@@ -40,7 +40,7 @@ namespace ScreenshotsService.Services
                 {
                     var computedName = $"{currentUrl}{Guid.NewGuid()}";
                     var hashValue = _HashService.GetHash(computedName);
-                    using (MemoryStream memoryStream = _ProcessImage.MakeScreenshot(currentUrl, hashValue))
+                    using (MemoryStream memoryStream = _ProcessImage.MakeScreenshot(currentUrl, hashValue, 0, 0))
                     {
                         _PersistData.PersistImage(memoryStream, hashValue);
                         result.Add(new ScreenshotResponseModel { SourceUrl = currentUrl, RemoteFileKey = hashValue });

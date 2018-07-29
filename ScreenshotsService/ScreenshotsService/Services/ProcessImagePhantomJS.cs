@@ -22,12 +22,7 @@ namespace ScreenshotsService.Services
             _PhantomJsOptinons = phantomOptions;
         }
 
-        public MemoryStream MakeScreenshot(int width, int height)
-        {
-            throw new NotImplementedException();
-        }
-
-        public MemoryStream MakeScreenshot(string url, string hashValue)
+        public MemoryStream MakeScreenshot(string url, string hashValue, int width, int height)
         {
             try
             {
