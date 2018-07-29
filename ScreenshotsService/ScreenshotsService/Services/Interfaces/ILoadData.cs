@@ -1,9 +1,10 @@
 ﻿using System.IO;
+using System.Threading.Tasks;
 
 namespace ScreenshotsService.Services.Interfaces
 {
     public interface ILoadData
     {
-        MemoryStream LoadImage(string fileName);
+        Task<MemoryStream> LoadImageAsync(string fileName);
     }
 }

@@ -3,6 +3,7 @@ using ScreenshotsService.UtilServices.Interfaces;
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace ScreenshotsService.Services
 {
@@ -22,15 +23,19 @@ namespace ScreenshotsService.Services
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
                     url = url.Replace("&", "^&");
-                    Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = false });
+                    Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
+                    Thread.Sleep(1000);
+
                 }
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                 {
                     Process.Start("xdg-open", url);
+                    Thread.Sleep(1000);
                 }
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
                 {
                     Process.Start("open", url);
+                    Thread.Sleep(1000);
                 }
             }
             catch(Exception ex)

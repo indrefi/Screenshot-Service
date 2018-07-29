@@ -35,13 +35,13 @@ namespace ScreenshotsService
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             // Add custom services
-            services.AddTransient<IProcessImage, ProcessImageScreenshot>();
+            services.AddTransient<IProcessImage, ProcessImagePhantomJS>();
             services.AddTransient<IPersistData, PersistToLocalDisk>();
             services.AddTransient<IHashService, ComputeSHA256>();
             services.AddTransient<ICollectSystemInfo, CollectSystemInfo>();
             services.AddTransient<IOpenPages, OpenPagesWithDefaultBrowser>();
             services.AddTransient<ILoadData, LoadImageFromLocalDisk>();
-
+            
             services.AddSingleton<IDisplaySize, DisplaySize>();
             services.AddSingleton<IConnectToS3, ConnectToS3>();
 

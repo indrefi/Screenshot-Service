@@ -1,9 +1,10 @@
 ﻿using System.IO;
+using System.Threading.Tasks;
 
 namespace ScreenshotsService.Services.Interfaces
 {
     public interface IPersistData
     {
-        void PersistImage(MemoryStream memoryStream, string fileName);
+        Task PersistImageAsync(MemoryStream memoryStream, string fileName);
     }
 }

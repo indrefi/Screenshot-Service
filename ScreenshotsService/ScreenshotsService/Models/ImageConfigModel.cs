@@ -6,5 +6,6 @@
         public string ImageFormat { get; set; }
         public int DefaultWidth { get; set; }
         public int DefaultHeight { get; set; }
+        public string PhantomJSDriverPath { get; set; }
     }
 }

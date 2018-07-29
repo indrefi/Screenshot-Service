@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -43,9 +42,9 @@ namespace ScreenshotsService.Controllers
 
         // GET: api/Screenshots/191347bfe55d0ca9a574db77bc8648275ce258461450e793528e0cc6d2dcf8f5
         [HttpGet("{path}")]
-        public IActionResult Get(string path)
+        public async Task<IActionResult> Get(string path)
         {
-            var dataStream = _LoadData.LoadImage(path);
+            var dataStream =  await _LoadData.LoadImageAsync(path);
             if (dataStream is null) return StatusCode(500);
 
             dataStream.Position = 0;
@@ -56,23 +55,22 @@ namespace ScreenshotsService.Controllers
         // POST: api/screenshots
         // JSON body that maps UrlModel
         [HttpPost]
-        public ActionResult<string> Post(UrlModel urlModel)
+        public async Task<ActionResult<string>> Post(UrlModel urlModel)
         {
             var result = new List<ScreenshotResponseModel>();
-            (int, int) size = _DisplaySize.GetSize();
-
+           
             List<string> urlList = urlModel.Urls.ExtractUrl();
             if (urlList is null) return StatusCode(500);
 
-            foreach(var url in urlList)
+            foreach(var currentUrl in urlList)
             {
-                var hashValue = _HashService.GetHash(url);
-                _OpenPages.OpenUrl(url);
-                using (MemoryStream memoryStream = _ProcessImage.MakeScreenshot(size.Item1, size.Item2))
+                var composedName = $"{currentUrl}-{Guid.NewGuid()}";
+                var hashValue = _HashService.GetHash(composedName);
+                using (MemoryStream memoryStream = await _ProcessImage.MakeScreenshot(currentUrl, hashValue))
                 {
-                    _PersistData.PersistImage(memoryStream, hashValue);
-                    result.Add(new ScreenshotResponseModel { SourceUrl = url, RemoteFileKey = hashValue });
-                }             
+                    await _PersistData.PersistImageAsync(memoryStream, hashValue);
+                    result.Add(new ScreenshotResponseModel { SourceUrl = currentUrl, RemoteFileKey = hashValue });
+                }
             }
 
             return Ok( new { result = JsonConvert.SerializeObject(result) });
@@ -91,14 +89,20 @@ namespace ScreenshotsService.Controllers
             List<string> urlList = fileContent.ExtractUrl();
             if (urlList is null) return StatusCode(500);
 
-            foreach (var url in urlList)
+            //Parallel.ForEach(urlList, (currentUrl) => {
+            //    var composedName = $"{currentUrl}-{Guid.NewGuid()}";
+            //    var hashValue = _HashService.GetHash(composedName);
+            //    _BrowserService.MakeScreenshot(currentUrl, hashValue);
+            //    result.Add(new ScreenshotResponseModel { SourceUrl = currentUrl, RemoteFileKey = hashValue });
+            //});
+            foreach (var currentUrl in urlList)
             {
-                var hashValue = _HashService.GetHash(url);
-                _OpenPages.OpenUrl(url);
-                using (MemoryStream memoryStream = _ProcessImage.MakeScreenshot(size.Item1, size.Item2))
+                var composedName = $"{currentUrl}-{Guid.NewGuid()}";
+                var hashValue = _HashService.GetHash(composedName);
+                using (MemoryStream memoryStream = await _ProcessImage.MakeScreenshot(currentUrl, hashValue))
                 {
-                    _PersistData.PersistImage(memoryStream, hashValue);
-                    result.Add(new ScreenshotResponseModel { SourceUrl = url, RemoteFileKey = hashValue });
+                    await _PersistData.PersistImageAsync(memoryStream, hashValue);
+                    result.Add(new ScreenshotResponseModel { SourceUrl = currentUrl, RemoteFileKey = hashValue });
                 }
             }
 

@@ -6,6 +6,7 @@ using ScreenshotsService.Services.Interfaces;
 using ScreenshotsService.UtilServices.Interfaces;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace ScreenshotsService.Services
 {
@@ -24,7 +25,7 @@ namespace ScreenshotsService.Services
             _ConnectToS3 = connectToS3;
         }
 
-        public void PersistImage(MemoryStream memoryStream, string fileName)
+        public async Task PersistImageAsync(MemoryStream memoryStream, string fileName)
         {
             try
             {
@@ -37,7 +38,7 @@ namespace ScreenshotsService.Services
                     request.BucketName = _S3Settings.Value.BucketName;
                     request.Key = fileName;
                     request.InputStream = memoryStream;
-                    utility.Upload(request);
+                    await utility.UploadAsync(request);
 
                     _Logger.LogInformation($"{fileName} has been uploaded to AWS S3");
                 }

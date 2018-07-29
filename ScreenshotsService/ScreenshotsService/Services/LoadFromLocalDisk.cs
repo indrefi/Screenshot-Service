@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using ScreenshotsService.Models;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace ScreenshotsService.Services.Interfaces
 {
@@ -18,7 +19,7 @@ namespace ScreenshotsService.Services.Interfaces
             _ImageOptions = imageOptions;
         }
 
-        public MemoryStream LoadImage(string fileName)
+        public async Task<MemoryStream> LoadImageAsync(string fileName)
         {
             var path = string.Join("", _ImageOptions.Value.ImageDiskPath, fileName,".", _ImageOptions.Value.ImageFormat);
             try
@@ -28,7 +29,7 @@ namespace ScreenshotsService.Services.Interfaces
                     MemoryStream returnStream = new MemoryStream();
                     using(FileStream fs = new FileStream(path, FileMode.Open))
                     {
-                        fs.CopyTo(returnStream);
+                       await fs.CopyToAsync(returnStream);
                     }
                     return returnStream;
                 }

@@ -5,6 +5,7 @@ using ScreenshotsService.Models;
 using ScreenshotsService.UtilServices.Interfaces;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace ScreenshotsService.Services.Interfaces
 {
@@ -24,7 +25,7 @@ namespace ScreenshotsService.Services.Interfaces
             _ConnectToS3 = connectToS3;
         }
 
-        public MemoryStream LoadImage(string fileName)
+        public async Task<MemoryStream> LoadImageAsync(string fileName)
         {
             try
             {
@@ -36,10 +37,10 @@ namespace ScreenshotsService.Services.Interfaces
 
                 var awsS3Instance = _ConnectToS3.GetAwsS3ClientInstance();
 
-                using (var responseObject = awsS3Instance.GetObjectAsync(getRequest).Result)
+                using (var responseObject = await awsS3Instance.GetObjectAsync(getRequest))
                 {
                     MemoryStream returnStream = new MemoryStream();
-                    responseObject.ResponseStream.CopyTo(returnStream);
+                    await responseObject.ResponseStream.CopyToAsync(returnStream);
 
                     _Logger.LogInformation($"{fileName} has been loaded from AWS S3");
 
