@@ -41,5 +41,10 @@ namespace ScreenshotsService.Services
                 return new MemoryStream();
             }
         }
+
+        public MemoryStream MakeScreenshot(string url, string hashValue)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

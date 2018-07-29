@@ -39,12 +39,16 @@ namespace ScreenshotsService.UtilServices
                 }
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                 {
+                    // TODO If needed add implementation for Linux
+
                     //Process.Start("xdg-open", url);
                     //Xaxis=$(xrandr --current | grep '*' | uniq | awk '{print $1}' | cut -d 'x' -f1)
                     //Yaxis =$(xrandr--current | grep '*' | uniq | awk '{print $1}' | cut - d 'x' - f2)                    
                 }
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
                 {
+                    // TODO If needed add implementation for OSX
+
                     //Process.Start("system_profiler SPDisplaysDataType | grep Resolution");
                 }
             }

@@ -1,17 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Amazon.Runtime;
-using Amazon.S3;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using ScreenshotsService.Models;
 using ScreenshotsService.Services;
 using ScreenshotsService.Services.Interfaces;
@@ -35,12 +26,13 @@ namespace ScreenshotsService
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             // Add custom services
-            services.AddTransient<IProcessImage, ProcessImageScreenshot>();
+            services.AddTransient<IProcessImage, ProcessImagePhantomJS>();
             services.AddTransient<IPersistData, PersistToLocalDisk>();
             services.AddTransient<IHashService, ComputeSHA256>();
             services.AddTransient<ICollectSystemInfo, CollectSystemInfo>();
             services.AddTransient<IOpenPages, OpenPagesWithDefaultBrowser>();
             services.AddTransient<ILoadData, LoadImageFromLocalDisk>();
+            services.AddTransient<IExecuteTask, ExecuteProcessingTask>();
 
             services.AddSingleton<IDisplaySize, DisplaySize>();
             services.AddSingleton<IConnectToS3, ConnectToS3>();
@@ -49,7 +41,7 @@ namespace ScreenshotsService
             services.Configure<ImageConfigModel>(Configuration.GetSection("ImageConfig"));
             services.Configure<S3SettingsModel>(Configuration.GetSection("S3Settings"));
             services.Configure<DisplaySizeSettingsModel>(Configuration.GetSection("DisplaySizeSettings"));
-
+            services.Configure<PhantomJsSettingsModel>(Configuration.GetSection("PhantomJsSettings"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
