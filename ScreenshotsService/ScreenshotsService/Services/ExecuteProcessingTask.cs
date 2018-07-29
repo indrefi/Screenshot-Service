@@ -29,7 +29,12 @@ namespace ScreenshotsService.Services
         {
             var result = new List<ScreenshotResponseModel>();
 
-            Parallel.ForEach(urlList, (currentUrl =>
+            ParallelOptions opt = new ParallelOptions
+            {
+                MaxDegreeOfParallelism = Environment.ProcessorCount
+            };
+
+            Parallel.ForEach(urlList, opt, (currentUrl =>
             {
                 var computedName = $"{currentUrl}{Guid.NewGuid()}";
                 var hashValue = _HashService.GetHash(computedName);
