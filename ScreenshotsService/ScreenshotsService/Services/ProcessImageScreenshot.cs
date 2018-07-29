@@ -16,7 +16,7 @@ namespace ScreenshotsService.Services
             _Logger = logger;
         }
 
-        public MemoryStream MakeScreenshot(int width, int height)
+        public MemoryStream MakeScreenshot(string url, string hashValue, int width, int height)
         {
             try
             {
