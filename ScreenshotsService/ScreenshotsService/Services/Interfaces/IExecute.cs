@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ScreenshotsService.Services.Interfaces
 {
-    public interface IExecuteTask
+    public interface IExecute
     {
         List<ScreenshotResponseModel> Execute(List<string> urlList);
     }

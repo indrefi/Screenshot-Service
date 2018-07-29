@@ -9,14 +9,14 @@ using System.Threading.Tasks;
 
 namespace ScreenshotsService.Services
 {
-    public class ExecuteProcessingTask : IExecuteTask
+    public class ExecuteProcessing : IExecute
     {
         private readonly ILogger _Logger;
         private readonly IProcessImage _ProcessImage;
         private readonly IPersistData _PersistData;
         private readonly IHashService _HashService;
 
-        public ExecuteProcessingTask(ILogger<ExecuteProcessingTask> logger, IProcessImage processImage, IPersistData persistData,
+        public ExecuteProcessing(ILogger<ExecuteProcessing> logger, IProcessImage processImage, IPersistData persistData,
             IHashService hashService)
         {
             _Logger = logger;

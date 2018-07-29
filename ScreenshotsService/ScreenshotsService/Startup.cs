@@ -27,12 +27,12 @@ namespace ScreenshotsService
 
             // Add custom services
             services.AddTransient<IProcessImage, ProcessImagePhantomJS>();
-            services.AddTransient<IPersistData, PersistToLocalDisk>();
+            services.AddTransient<IPersistData, PersistToS3>();
             services.AddTransient<IHashService, ComputeSHA256>();
             services.AddTransient<ICollectSystemInfo, CollectSystemInfo>();
             services.AddTransient<IOpenPages, OpenPagesWithDefaultBrowser>();
-            services.AddTransient<ILoadData, LoadImageFromLocalDisk>();
-            services.AddTransient<IExecuteTask, ExecuteProcessingTask>();
+            services.AddTransient<ILoadData, LoadImageFromS3>();
+            services.AddTransient<IExecute, ExecuteProcessing>();
 
             services.AddSingleton<IDisplaySize, DisplaySize>();
             services.AddSingleton<IConnectToS3, ConnectToS3>();

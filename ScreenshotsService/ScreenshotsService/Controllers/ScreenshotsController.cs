@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -16,10 +17,10 @@ namespace ScreenshotsService.Controllers
     {
         private readonly ILogger _Logger;
         private readonly ILoadData _LoadData;
-        private readonly IExecuteTask _ExecuteTask;
+        private readonly IExecute _ExecuteTask;
         private readonly IOptions<ImageConfigModel> _ImageConfig;
 
-        public ScreenshotsController(ILogger<ScreenshotsController> logger,  ILoadData loadData, IOptions<ImageConfigModel> imageConfig, IExecuteTask executeTask)
+        public ScreenshotsController(ILogger<ScreenshotsController> logger,  ILoadData loadData, IOptions<ImageConfigModel> imageConfig, IExecute executeTask)
         {
             _Logger = logger;
             _LoadData = loadData;
@@ -44,14 +45,23 @@ namespace ScreenshotsService.Controllers
         [HttpPost]
         public ActionResult<string> Post(UrlModel urlModel)
         {
-            var result = new List<ScreenshotResponseModel>();
+            try
+            {
+                var result = new List<ScreenshotResponseModel>();
 
-            List<string> urlList = urlModel.Urls.ExtractUrl();
-            if (urlList is null) return StatusCode(500);
+                List<string> urlList = urlModel.Urls.ExtractUrl();
+                if (urlList is null) return StatusCode(500);
 
-            _ExecuteTask.Execute(urlList);
+                result.AddRange(_ExecuteTask.Execute(urlList));
 
-            return Ok( new { result = JsonConvert.SerializeObject(result) });
+                return Ok(new { result = JsonConvert.SerializeObject(result) });
+            }
+            catch(Exception ex)
+            {
+                _Logger.LogError("Error occured: ", ex);
+
+                return StatusCode(500);
+            }
         }
 
         // POST: api/screenshots/upload
@@ -59,15 +69,24 @@ namespace ScreenshotsService.Controllers
         [HttpPost("Upload")]
         public IActionResult Post(IFormFile file)
         {
-            var result = new List<ScreenshotResponseModel>();
-            var fileContent = file.ReadAsStringAsync().Result.Trim();
+            try
+            {
+                var result = new List<ScreenshotResponseModel>();
+                var fileContent = file.ReadAsStringAsync().Result.Trim();
 
-            List<string> urlList = fileContent.ExtractUrl();
-            if (urlList is null) return StatusCode(500);
+                List<string> urlList = fileContent.ExtractUrl();
+                if (urlList is null) return StatusCode(500);
 
-            _ExecuteTask.Execute(urlList);
+                result.AddRange(_ExecuteTask.Execute(urlList));
 
-            return Ok(new { result = JsonConvert.SerializeObject(result) });
+                return Ok(new { result = JsonConvert.SerializeObject(result) });
+            }
+            catch(Exception ex)
+            {
+                _Logger.LogError("Error occured: ", ex);
+
+                return StatusCode(500);
+            }
         }
     }
 }

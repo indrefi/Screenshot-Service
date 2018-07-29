@@ -6,6 +6,5 @@ namespace ScreenshotsService.Services.Interfaces
     {
         MemoryStream MakeScreenshot(int width, int height);
         MemoryStream MakeScreenshot(string url, string hashValue);
-
     }
 }
