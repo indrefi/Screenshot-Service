@@ -36,12 +36,19 @@ namespace ScreenshotsService.Services
 
             Parallel.ForEach(urlList, opt, (currentUrl =>
             {
-                var computedName = $"{currentUrl}{Guid.NewGuid()}";
-                var hashValue = _HashService.GetHash(computedName);
-                using (MemoryStream memoryStream = _ProcessImage.MakeScreenshot(currentUrl, hashValue))
+                try
                 {
-                    _PersistData.PersistImage(memoryStream, hashValue);
-                    result.Add(new ScreenshotResponseModel { SourceUrl = currentUrl, RemoteFileKey = hashValue });
+                    var computedName = $"{currentUrl}{Guid.NewGuid()}";
+                    var hashValue = _HashService.GetHash(computedName);
+                    using (MemoryStream memoryStream = _ProcessImage.MakeScreenshot(currentUrl, hashValue))
+                    {
+                        _PersistData.PersistImage(memoryStream, hashValue);
+                        result.Add(new ScreenshotResponseModel { SourceUrl = currentUrl, RemoteFileKey = hashValue });
+                    }
+                }
+                catch(Exception ex)
+                {
+                    _Logger.LogError($"Error occured: ", ex);
                 }
             }));
 
